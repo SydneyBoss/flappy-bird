@@ -20,9 +20,9 @@
 
   // Configuration Profiles
   const DIFFICULTY = {
-    chill: { gap: 150, speed: 2.1, spawnInterval: 140 },
-    classic: { gap: 125, speed: 2.5, spawnInterval: 120 },
-    hardcore: { gap: 105, speed: 3.1, spawnInterval: 100 }
+    chill: { gap: 180, speed: 2.0, spawnInterval: 165 },
+    classic: { gap: 155, speed: 2.3, spawnInterval: 145 },
+    hardcore: { gap: 130, speed: 2.8, spawnInterval: 125 }
   };
 
   const SKINS = {
@@ -425,8 +425,8 @@
       this.passed = false;
 
       // Safe bounds for gap
-      const minTop = 80;
-      const maxTop = V_HEIGHT - GROUND_HEIGHT - gap - 80;
+      const minTop = 70;
+      const maxTop = V_HEIGHT - GROUND_HEIGHT - gap - 70;
       this.topHeight = Math.floor(minTop + Math.random() * (maxTop - minTop));
       this.bottomY = this.topHeight + this.gap;
       this.bottomHeight = V_HEIGHT - GROUND_HEIGHT - this.bottomY;
