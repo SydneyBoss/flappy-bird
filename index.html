@@ -20,6 +20,9 @@
         <button id="btn-sound" class="icon-btn" title="Toggle Sound (M)" aria-label="Toggle Sound">
           <span id="sound-icon">🔊</span>
         </button>
+        <button id="btn-speed-toggle" class="icon-btn speed-badge-btn" title="Cycle Game Speed" aria-label="Game Speed">
+          <span id="speed-indicator">⚡ 1x</span>
+        </button>
         <button id="btn-scanlines" class="icon-btn" title="Toggle CRT Scanlines" aria-label="Toggle CRT Effect">
           <span>📺</span>
         </button>
@@ -87,6 +90,16 @@
           </div>
         </div>
 
+        <!-- Game Speed Selector -->
+        <div class="skin-selector">
+          <div class="selector-label">Game Speed</div>
+          <div class="speed-options">
+            <button class="speed-btn" data-speed="slow">🐢 Slow</button>
+            <button class="speed-btn active" data-speed="normal">⚡ Normal</button>
+            <button class="speed-btn" data-speed="fast">🚀 Fast</button>
+          </div>
+        </div>
+
         <button id="btn-start" class="btn-primary">
           <span>▶</span> PLAY NOW
         </button>
@@ -101,6 +114,17 @@
     <div id="pause-screen" class="modal-screen hidden">
       <div class="pause-card">
         <h2 class="pause-title">GAME PAUSED</h2>
+
+        <!-- Speed selector in pause screen -->
+        <div class="skin-selector">
+          <div class="selector-label">Speed</div>
+          <div class="speed-options">
+            <button class="speed-btn" data-speed="slow">🐢 Slow</button>
+            <button class="speed-btn active" data-speed="normal">⚡ Normal</button>
+            <button class="speed-btn" data-speed="fast">🚀 Fast</button>
+          </div>
+        </div>
+
         <button id="btn-resume" class="btn-primary">
           <span>▶</span> RESUME
         </button>

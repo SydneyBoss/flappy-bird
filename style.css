@@ -313,6 +313,47 @@ body {
   border-color: #2563eb;
 }
 
+/* Speed Selector */
+.speed-options {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.speed-btn {
+  flex: 1;
+  padding: 8px 4px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 10px;
+  border: 2px solid #e2e8f0;
+  background: #f8fafc;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.speed-btn:hover {
+  background: #e2e8f0;
+}
+
+.speed-btn.active {
+  background: #10b981;
+  color: #fff;
+  border-color: #059669;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35);
+  transform: translateY(-1px);
+}
+
+.speed-badge-btn {
+  width: auto;
+  min-width: 62px;
+  padding: 0 10px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+}
+
 /* Play Buttons */
 .btn-primary {
   background: linear-gradient(180deg, #fcd02c 0%, #f59e0b 100%);

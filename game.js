@@ -80,6 +80,8 @@
 
   const btnSound = document.getElementById('btn-sound');
   const soundIcon = document.getElementById('sound-icon');
+  const btnSpeedToggle = document.getElementById('btn-speed-toggle');
+  const speedIndicator = document.getElementById('speed-indicator');
   const btnScanlines = document.getElementById('btn-scanlines');
   const btnPause = document.getElementById('btn-pause');
   const btnStart = document.getElementById('btn-start');
@@ -93,6 +95,28 @@
   let currentState = STATES.START;
   let currentDifficulty = 'classic';
   let currentSkin = 'custom';
+
+  const SPEED_PRESETS = {
+    slow: {
+      multiplier: 0.75,
+      label: '🐢 0.75x',
+      name: 'Slow'
+    },
+    normal: {
+      multiplier: 1.0,
+      label: '⚡ 1.0x',
+      name: 'Normal'
+    },
+    fast: {
+      multiplier: 1.35,
+      label: '🚀 1.35x',
+      name: 'Fast'
+    }
+  };
+
+  let currentSpeed = localStorage.getItem('flappy_speed') || 'normal';
+  if (!SPEED_PRESETS[currentSpeed]) currentSpeed = 'normal';
+
   let score = 0;
   let highScore = parseInt(localStorage.getItem('flappy_best_score') || '0', 10);
   let scanlinesActive = localStorage.getItem('flappy_scanlines') === 'true';
@@ -829,8 +853,9 @@
     const rawDelta = timestamp - lastTime;
     lastTime = timestamp;
 
-    // Normalize dt to 60 FPS (1.0 = exactly 16.67ms)
-    const dt = Math.min(rawDelta / (1000 / 60), 2.5);
+    // Normalize dt to 60 FPS (1.0 = exactly 16.67ms) scaled by game speed
+    const speedMultiplier = SPEED_PRESETS[currentSpeed] ? SPEED_PRESETS[currentSpeed].multiplier : 1.0;
+    const dt = Math.min(rawDelta / (1000 / 60), 2.5) * speedMultiplier;
 
     ctx.save();
     applyFX();
@@ -972,6 +997,49 @@
       currentSkin = btn.getAttribute('data-skin');
     });
   });
+
+  // Game Speed Management
+  function setSpeed(speedKey) {
+    if (!SPEED_PRESETS[speedKey]) return;
+    currentSpeed = speedKey;
+    localStorage.setItem('flappy_speed', currentSpeed);
+
+    if (speedIndicator) {
+      speedIndicator.textContent = SPEED_PRESETS[currentSpeed].label;
+    }
+
+    document.querySelectorAll('.speed-btn').forEach(btn => {
+      if (btn.getAttribute('data-speed') === currentSpeed) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  // Speed Quick Cycle in Top Toolbar (slow -> normal -> fast)
+  const speedCycle = ['slow', 'normal', 'fast'];
+  if (btnSpeedToggle) {
+    btnSpeedToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      window.soundManager.playClick();
+      const nextIdx = (speedCycle.indexOf(currentSpeed) + 1) % speedCycle.length;
+      setSpeed(speedCycle[nextIdx]);
+      showToast(`Pace: ${SPEED_PRESETS[currentSpeed].name} (${SPEED_PRESETS[currentSpeed].label})`);
+    });
+  }
+
+  // Speed Buttons in Start & Pause Menus
+  document.querySelectorAll('.speed-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      window.soundManager.playClick();
+      const s = btn.getAttribute('data-speed');
+      setSpeed(s);
+    });
+  });
+
+  setSpeed(currentSpeed);
 
   // Difficulty Selector
   document.querySelectorAll('.diff-btn').forEach(btn => {
