@@ -26,6 +26,12 @@
   };
 
   const SKINS = {
+    custom: {
+      body: '#ffffff',
+      belly: '#fcd02c',
+      outline: '#222222',
+      feather: '#fde047'
+    },
     classic: {
       body: '#fcd02c',
       belly: '#fef59e',
@@ -86,10 +92,17 @@
   // Game Engine Variables
   let currentState = STATES.START;
   let currentDifficulty = 'classic';
-  let currentSkin = 'classic';
+  let currentSkin = 'custom';
   let score = 0;
   let highScore = parseInt(localStorage.getItem('flappy_best_score') || '0', 10);
   let scanlinesActive = localStorage.getItem('flappy_scanlines') === 'true';
+
+  // Custom Player Sprites
+  const imgJump = new Image();
+  imgJump.src = 'player_jump.png'; // White T-shirt (jumping)
+
+  const imgGlide = new Image();
+  imgGlide.src = 'player_glide.png'; // Black T-shirt (moving forward / falling)
 
   let lastTime = 0;
   let frameCount = 0;
@@ -203,79 +216,115 @@
     },
 
     draw() {
-      const skin = SKINS[currentSkin];
       ctx.save();
       ctx.translate(this.x, this.y);
       ctx.rotate(this.rotation);
 
-      // Bird Body (Outer drop shadow / outline)
-      ctx.fillStyle = skin.body;
-      ctx.strokeStyle = skin.outline;
-      ctx.lineWidth = 2.5;
+      if (currentSkin === 'custom') {
+        // When moving forward / falling (velocity >= 0): Black T-Shirt
+        // When jumping (velocity < 0): White T-Shirt
+        const activeImg = (this.velocity < 0) ? imgJump : imgGlide;
+        const renderR = 23; // Render size 46x46px
 
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 16, 13, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
+        // Drop shadow for depth
+        ctx.save();
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+        ctx.shadowBlur = 8;
+        ctx.shadowOffsetY = 4;
 
-      // Belly
-      ctx.fillStyle = skin.belly;
-      ctx.beginPath();
-      ctx.ellipse(-2, 3, 10, 7, 0, 0, Math.PI * 2);
-      ctx.fill();
+        if (activeImg.complete && activeImg.naturalWidth > 0) {
+          ctx.drawImage(activeImg, -renderR, -renderR, renderR * 2, renderR * 2);
+        } else {
+          ctx.fillStyle = '#fcd02c';
+          ctx.beginPath();
+          ctx.arc(0, 0, renderR, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.restore();
 
-      // Wing animation
-      const wingYOffset = Math.sin(this.wingAngle) * 4;
-      ctx.save();
-      ctx.translate(-5, 0 + wingYOffset);
-      ctx.fillStyle = '#ffffff';
-      ctx.strokeStyle = skin.outline;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 7, 4.5, -0.2, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-      ctx.restore();
+        // Animated retro wing flap on avatar side
+        const wingYOffset = Math.sin(this.wingAngle) * 3.5;
+        ctx.save();
+        ctx.translate(-renderR + 4, wingYOffset);
+        ctx.fillStyle = (this.velocity < 0) ? '#ffffff' : '#111111';
+        ctx.strokeStyle = '#000000';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 7, 4.5, -0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
 
-      // Eye
-      ctx.fillStyle = skin.eye;
-      ctx.strokeStyle = skin.outline;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.ellipse(7, -4, 5, 6, 0, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
+      } else {
+        const skin = SKINS[currentSkin];
+        ctx.fillStyle = skin.body;
+        ctx.strokeStyle = skin.outline;
+        ctx.lineWidth = 2.5;
 
-      // Pupil with gleam
-      ctx.fillStyle = skin.pupil;
-      ctx.beginPath();
-      ctx.arc(8.5, -4, 2.2, 0, Math.PI * 2);
-      ctx.fill();
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 16, 13, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
 
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(9.2, -5.2, 0.9, 0, Math.PI * 2);
-      ctx.fill();
+        // Belly
+        ctx.fillStyle = skin.belly;
+        ctx.beginPath();
+        ctx.ellipse(-2, 3, 10, 7, 0, 0, Math.PI * 2);
+        ctx.fill();
 
-      // Beak
-      ctx.fillStyle = skin.beak;
-      ctx.strokeStyle = skin.outline;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(11, -1);
-      ctx.lineTo(21, 2);
-      ctx.lineTo(10, 6);
-      ctx.closePath();
-      ctx.fill();
-      ctx.stroke();
+        // Wing animation
+        const wingYOffset = Math.sin(this.wingAngle) * 4;
+        ctx.save();
+        ctx.translate(-5, 0 + wingYOffset);
+        ctx.fillStyle = '#ffffff';
+        ctx.strokeStyle = skin.outline;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(0, 0, 7, 4.5, -0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.restore();
 
-      // Crest feather
-      ctx.fillStyle = skin.crest;
-      ctx.beginPath();
-      ctx.moveTo(-6, -11);
-      ctx.quadraticCurveTo(-10, -17, -3, -15);
-      ctx.quadraticCurveTo(0, -13, -2, -10);
-      ctx.fill();
+        // Eye
+        ctx.fillStyle = skin.eye;
+        ctx.strokeStyle = skin.outline;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.ellipse(7, -4, 5, 6, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+
+        // Pupil with gleam
+        ctx.fillStyle = skin.pupil;
+        ctx.beginPath();
+        ctx.arc(8.5, -4, 2.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.beginPath();
+        ctx.arc(9.2, -5.2, 0.9, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Beak
+        ctx.fillStyle = skin.beak;
+        ctx.strokeStyle = skin.outline;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(11, -1);
+        ctx.lineTo(21, 2);
+        ctx.lineTo(10, 6);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        // Crest feather
+        ctx.fillStyle = skin.crest;
+        ctx.beginPath();
+        ctx.moveTo(-6, -11);
+        ctx.quadraticCurveTo(-10, -17, -3, -15);
+        ctx.quadraticCurveTo(0, -13, -2, -10);
+        ctx.fill();
+      }
 
       ctx.restore();
     }
