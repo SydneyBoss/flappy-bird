@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Sky background -->
+  <rect width="32" height="32" rx="6" fill="#4ec0ca" />
+  <!-- Bird Body -->
+  <ellipse cx="15" cy="16" rx="9" ry="8" fill="#fcd02c" stroke="#333" stroke-width="1.5" />
+  <!-- Belly -->
+  <ellipse cx="13" cy="18" rx="6" ry="5" fill="#fef59e" />
+  <!-- Eye -->
+  <ellipse cx="19" cy="13" rx="3.5" ry="4" fill="#ffffff" stroke="#333" stroke-width="1.2" />
+  <circle cx="20.5" cy="13" r="1.5" fill="#222" />
+  <circle cx="21.2" cy="12.2" r="0.6" fill="#fff" />
+  <!-- Beak -->
+  <path d="M21 16 L29 18 L21 21 Z" fill="#f85324" stroke="#333" stroke-width="1.2" stroke-linejoin="round" />
+  <!-- Wing -->
+  <ellipse cx="10" cy="16" rx="4" ry="2.5" fill="#fff" stroke="#333" stroke-width="1.2" transform="rotate(-15 10 16)" />
+</svg>

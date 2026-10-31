@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Flappy Bird - Retro Arcade</title>
+  <meta name="description" content="Play the ultimate retro Flappy Bird arcade game with procedural sounds, custom skins, and responsive controls!">
+  <meta name="theme-color" content="#4ec0ca">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="arcade-wrapper">
+    <!-- Top HUD Toolbar -->
+    <header class="top-bar">
+      <div class="top-bar-left">
+        <button id="btn-sound" class="icon-btn" title="Toggle Sound (M)" aria-label="Toggle Sound">
+          <span id="sound-icon">🔊</span>
+        </button>
+        <button id="btn-scanlines" class="icon-btn" title="Toggle CRT Scanlines" aria-label="Toggle CRT Effect">
+          <span>📺</span>
+        </button>
+      </div>
+
+      <div class="top-bar-right">
+        <button id="btn-pause" class="icon-btn hidden" title="Pause Game (P)" aria-label="Pause Game">
+          <span>⏸️</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- In-Game Big Live Score -->
+    <div id="live-score" class="score-hud">0</div>
+
+    <!-- Retro CRT Scanlines Effect Overlay -->
+    <div id="scanlines" class="scanlines-overlay"></div>
+
+    <!-- Main Game Canvas -->
+    <canvas id="game-canvas" width="400" height="640"></canvas>
+
+    <!-- START SCREEN MODAL -->
+    <div id="start-screen" class="modal-screen">
+      <h1 class="title-logo">FLAPPY<br>BIRD</h1>
+
+      <div class="menu-card">
+        <!-- Bird Skin Selector -->
+        <div class="skin-selector">
+          <div class="selector-label">Choose Character</div>
+          <div class="skin-options">
+            <button class="skin-btn active" data-skin="classic">
+              <svg class="skin-preview" viewBox="0 0 32 32">
+                <ellipse cx="16" cy="16" rx="10" ry="9" fill="#fcd02c" stroke="#333" stroke-width="1.5"/>
+                <ellipse cx="14" cy="18" rx="6" ry="5" fill="#fef59e"/>
+                <ellipse cx="20" cy="13" rx="3.5" ry="4" fill="#fff" stroke="#333" stroke-width="1.2"/>
+                <circle cx="21" cy="13" r="1.5" fill="#111"/>
+                <path d="M22 16 L29 18 L22 21 Z" fill="#f85324" stroke="#333" stroke-width="1.2"/>
+              </svg>
+              <span>Classic</span>
+            </button>
+            <button class="skin-btn" data-skin="cyber">
+              <svg class="skin-preview" viewBox="0 0 32 32">
+                <ellipse cx="16" cy="16" rx="10" ry="9" fill="#00e5ff" stroke="#003b46" stroke-width="1.5"/>
+                <ellipse cx="14" cy="18" rx="6" ry="5" fill="#80f7ff"/>
+                <ellipse cx="20" cy="13" rx="3.5" ry="4" fill="#ff007f" stroke="#003b46" stroke-width="1.2"/>
+                <circle cx="21" cy="13" r="1.5" fill="#ffffff"/>
+                <path d="M22 16 L29 18 L22 21 Z" fill="#ffe600" stroke="#003b46" stroke-width="1.2"/>
+              </svg>
+              <span>Cyber</span>
+            </button>
+            <button class="skin-btn" data-skin="phoenix">
+              <svg class="skin-preview" viewBox="0 0 32 32">
+                <ellipse cx="16" cy="16" rx="10" ry="9" fill="#ef4444" stroke="#450a0a" stroke-width="1.5"/>
+                <ellipse cx="14" cy="18" rx="6" ry="5" fill="#fca5a5"/>
+                <ellipse cx="20" cy="13" rx="3.5" ry="4" fill="#fbbf24" stroke="#450a0a" stroke-width="1.2"/>
+                <circle cx="21" cy="13" r="1.5" fill="#7f1d1d"/>
+                <path d="M22 16 L29 18 L22 21 Z" fill="#f59e0b" stroke="#450a0a" stroke-width="1.2"/>
+              </svg>
+              <span>Phoenix</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Difficulty Selector -->
+        <div class="skin-selector">
+          <div class="selector-label">Difficulty</div>
+          <div class="difficulty-options">
+            <button class="diff-btn" data-diff="chill">Chill</button>
+            <button class="diff-btn active" data-diff="classic">Classic</button>
+            <button class="diff-btn" data-diff="hardcore">Hardcore</button>
+          </div>
+        </div>
+
+        <button id="btn-start" class="btn-primary">
+          <span>▶</span> PLAY NOW
+        </button>
+
+        <div class="instructions-hint">
+          TAP • CLICK • SPACEBAR TO JUMP
+        </div>
+      </div>
+    </div>
+
+    <!-- PAUSE SCREEN MODAL -->
+    <div id="pause-screen" class="modal-screen hidden">
+      <div class="pause-card">
+        <h2 class="pause-title">GAME PAUSED</h2>
+        <button id="btn-resume" class="btn-primary">
+          <span>▶</span> RESUME
+        </button>
+        <button id="btn-restart-from-pause" class="btn-secondary">
+          <span>🔄</span> Restart
+        </button>
+      </div>
+    </div>
+
+    <!-- GAME OVER MODAL -->
+    <div id="gameover-screen" class="modal-screen hidden">
+      <h2 class="gameover-title">GAME OVER</h2>
+
+      <div class="menu-card">
+        <div class="scoreboard">
+          <div class="score-row">
+            <span class="score-label">SCORE</span>
+            <span id="final-score" class="score-value">0</span>
+          </div>
+          <div class="score-row">
+            <span class="score-label">BEST</span>
+            <span id="best-score" class="score-value">0</span>
+          </div>
+
+          <!-- Medal Display -->
+          <div class="medal-section">
+            <span id="medal-icon" class="medal-icon">🏅</span>
+            <span id="medal-text" class="medal-text">Keep Practicing!</span>
+          </div>
+        </div>
+
+        <button id="btn-play-again" class="btn-primary">
+          <span>🔄</span> PLAY AGAIN
+        </button>
+
+        <div class="button-group">
+          <button id="btn-share" class="btn-secondary">
+            <span>🔗</span> Share Score
+          </button>
+          <button id="btn-menu" class="btn-secondary">
+            <span>🏠</span> Menu
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Copy / Feedback Toast -->
+    <div id="toast" class="toast-msg">Score copied to clipboard!</div>
+  </div>
+
+  <!-- Audio and Game Logic -->
+  <script src="audio.js"></script>
+  <script src="game.js"></script>
+</body>
+</html>

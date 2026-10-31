@@ -1,0 +1,13 @@
+{
+  "name": "flappy-bird-arcade",
+  "version": "1.0.0",
+  "description": "Retro Arcade Flappy Bird with procedural Web Audio, particle effects, multiple bird skins and difficulty modes.",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve .",
+    "build": "echo 'Static build ready'"
+  },
+  "keywords": ["flappy-bird", "game", "canvas", "arcade", "web-audio"],
+  "author": "",
+  "license": "MIT"
+}
